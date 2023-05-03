@@ -1,7 +1,23 @@
 import { useFormik } from "formik";
 
+const validate = (values) => {
+  const errors = {};
+
+  if (!values.name) {
+    errors.name = `Обов'язкове поле`;
+  } else if (values.name.length < 2) {
+    errors.name = "Мінімум 2 символа для заповнення!";
+  }
+
+  if (!values.email) {
+    errors.email = `Обов'язкове поле`;
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = "Невірний email адресса";
+  }
+  return errors;
+};
+
 const Form = () => {
-    
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -10,6 +26,7 @@ const Form = () => {
       currency: "",
       terms: false,
     },
+    validate,
     onSubmit: (values) => console.log(JSON.stringify(values, null, 2)),
   });
 
@@ -23,7 +40,9 @@ const Form = () => {
         type="text"
         value={formik.values.name}
         onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
+      {formik.errors.name ? <div>{formik.errors.name}</div> : null}
       <label htmlFor="email">Ваша почта</label>
       <input
         id="email"
@@ -31,7 +50,10 @@ const Form = () => {
         type="email"
         value={formik.values.email}
         onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
+      {formik.errors.email ? <div>{formik.errors.email}</div> : null}
+
       <label htmlFor="amount">Количество</label>
       <input
         id="amount"
@@ -39,13 +61,15 @@ const Form = () => {
         type="number"
         value={formik.values.amount}
         onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
       <label htmlFor="currency">Валюта</label>
       <select
         id="currency"
         name="currency"
         value={formik.values.currency}
-        onChange={formik.handleChange}>
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}>
         <option value="">Выберите валюту</option>
         <option value="USD">USD</option>
         <option value="UAH">UAH</option>
@@ -59,6 +83,7 @@ const Form = () => {
           type="checkbox"
           value={formik.values.terms}
           onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
         Соглашаетесь с политикой конфиденциальности?
       </label>
